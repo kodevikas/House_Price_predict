@@ -71,7 +71,7 @@ if st.button("Predict House Price"):
     
     try:
         response = requests.post(
-            "http://127.0.0.1:8000/predict",
+           "https://house-price-predict-3a2r.onrender.com/predict",
             json=data
         )
 
