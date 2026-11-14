@@ -69,19 +69,28 @@ if st.button("Predict House Price"):
 
 
     
+    
     try:
-        response = requests.post(
-           "https://house-price-predict-3a2r.onrender.com/predict",
-            json=data
-        )
+        with st.spinner("Predicting house price..."):
 
-        if response.status_code == 200:
+            response = requests.post(
+                "https://house-price-predict-3a2r.onrender.com/predict",
+                json=data,
+                timeout=180
+            )
+
+            response.raise_for_status()
+
             result = response.json()
+
             st.success(result["result"])
 
-        else:
-            st.error(f"Prediction failed: {response.text}")
+    except requests.exceptions.Timeout:
+        st.error("Request timed out. Please try again.")
 
-    except requests.exceptions.ConnectionError:
-        st.error("FastAPI server is not running.")
+    except requests.exceptions.HTTPError:
+        st.error(f"API Error: {response.status_code}")
+        st.code(response.text)
 
+    except requests.exceptions.RequestException as e:
+        st.error(f"Connection Error: {e}")
